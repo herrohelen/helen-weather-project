@@ -1,0 +1,85 @@
+body {
+  background: linear-gradient(
+    109.6deg,
+    rgb(255, 194, 48) 11.2%,
+    rgb(255, 124, 0) 100.2%
+  );
+  background-attachment: fixed;
+}
+.container {
+  border: 1px solid #faeede;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px #d4f9fd;
+  width: 800px;
+  margin-top: 50px;
+  background-color: #faeede;
+  opacity: 83%;
+}
+.location-bubble {
+  font-size: 28px;
+}
+.row-today {
+  margin: 40px 25px 0 25px;
+}
+.row-list {
+  margin: 25px 25px 40px 25px;
+}
+h1 {
+  font-size: 30px;
+  font-weight: 300;
+  margin-bottom: 0;
+}
+
+h2 {
+  font-size: 55px;
+  font-family: "Fredoka One", cursive;
+  font-weight: 700;
+  margin-bottom: 0;
+}
+.date,
+.daily-temp,
+.precipitation {
+  font-size: 14px;
+  margin-bottom: 0;
+}
+.todays-weather {
+  font-family: "Rampart One", cursive;
+  font-weight: 600;
+}
+.todays-weather-icon {
+  font-size: 60px;
+}
+.todays-weather-temp {
+  font-size: 53px;
+}
+.todays-weather-degree {
+  font-size: 40px;
+}
+a:link {
+  text-decoration: none;
+}
+
+.col {
+  text-align: center;
+  padding: 7px;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+.day {
+  border: solid #fff;
+  border-radius: 5px;
+  padding: 10px 0;
+  background-color: #fff;
+  box-shadow: 2px 2px 7px rgb(128, 128, 128);
+}
+.day:hover {
+  box-shadow: 5px 5px 7px #d4f9fd;
+}
+.day-icon {
+  font-size: 32px;
+}
+.day-of-the-week {
+  font-family: "Fredoka One", cursive;
+  font-weight: 500;
+  font-size: 20px;
+}
