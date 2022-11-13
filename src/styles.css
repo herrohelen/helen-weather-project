@@ -38,7 +38,8 @@ h2 {
 }
 .date,
 .daily-temp,
-.precipitation {
+.description,
+.wind-speed {
   font-size: 14px;
   margin-bottom: 0;
 }
@@ -47,13 +48,20 @@ h2 {
   font-weight: 600;
 }
 .todays-weather-icon {
-  font-size: 60px;
+  font-size: 65px;
+}
+#weather-icon {
+  width: 80px;
 }
 .todays-weather-temp {
-  font-size: 53px;
+  font-size: 60px;
 }
 .todays-weather-degree {
-  font-size: 40px;
+  font-size: 28px;
+}
+.inactive-degrees {
+  color: #000000;
+  cursor: default;
 }
 a:link {
   text-decoration: none;
