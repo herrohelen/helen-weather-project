@@ -41,6 +41,7 @@ function formattedDate() {
   return (now = `${day}, ${month} ${now.getDate()}, ${year} | ${hour}:${min}`);
 }
 
+//capitalize city name
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -90,11 +91,14 @@ function updateValues(newCity, temps, wind, weather, units) {
 
   let currentCityHeader = document.querySelector("h2");
   currentCityHeader.innerHTML = capitalizeFirstLetter(newCity);
+  displayForecast();
 }
 
 function updateTempForCity(city, units) {
   let apiKey = "281450ec88936f4fa8ee9864682b49a0";
+  // let apiKey = "8fa43f1bb3c08595170oa2tf64203b0b";
   let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=${units}`;
+  // let apiUrl = `https://api.shecodes.io/weather/v1/current?query=${city}&key=${apiKey}&units=${units}`;
   axios.get(apiUrl).then(({data: {main: temps, wind, weather}}) => {
     currentUnits = units;
     currentCity = city;
@@ -114,9 +118,37 @@ let celciusLink = document.querySelector("#celcius-link");
 let fahrenheitLink = document.querySelector("#fahrenheit-link");
 celciusLink.addEventListener("click", () => {
   updateTempForCity(currentCity, "metric");
+  displayForecast();
 });
 fahrenheitLink.addEventListener("click", () =>
   updateTempForCity(currentCity, "imperial")
 );
-
 updateTempForCity("San Diego", "metric");
+
+// //forecast for 7 days
+function displayForecast() {
+  let forecastElement = document.querySelector("#forecast");
+
+  let forecastHTML = `<div class="row row-list">`;
+  let days = ["Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"];
+  days.forEach(function (day) {
+    forecastHTML =
+      forecastHTML +
+      `
+        <div class=" col">
+          <p class="day">
+          <span class="day-of-the-week">${day}</span>
+          <br />
+            <span class="day-icon">
+              <i class="bi bi-cloud-sun"></i>
+           </span>
+           <br />
+           <b>74°</b>| 66°
+          </p>
+       </div>
+`;
+  });
+
+  forecastHTML = forecastHTML + `</div>`;
+  forecastElement.innerHTML = forecastHTML;
+}
