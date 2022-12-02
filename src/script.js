@@ -54,7 +54,14 @@ let currentUnits = "metric";
 let currentCity = "San Diego";
 let windSpeedUnits = {imperial: " mph", metric: " km/h"};
 
-function updateValues(newCity, temps, wind, weather, units) {
+function getForecast(coordinates) {
+  let apiKey = "281450ec88936f4fa8ee9864682b49a0";
+  let apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${apiKey}&units=metric`;
+
+  https: axios.get(apiUrl).then(displayForecast);
+}
+
+function updateValues(newCity, temps, wind, weather, units, coord) {
   let celciusLink = document.querySelector("#celcius-link");
   let fahrenheitLink = document.querySelector("#fahrenheit-link");
   if (units === "metric") {
@@ -92,18 +99,20 @@ function updateValues(newCity, temps, wind, weather, units) {
   let currentCityHeader = document.querySelector("h2");
   currentCityHeader.innerHTML = capitalizeFirstLetter(newCity);
   displayForecast();
+  getForecast(coord);
 }
 
 function updateTempForCity(city, units) {
   let apiKey = "281450ec88936f4fa8ee9864682b49a0";
-  // let apiKey = "8fa43f1bb3c08595170oa2tf64203b0b";
   let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=${units}`;
-  // let apiUrl = `https://api.shecodes.io/weather/v1/current?query=${city}&key=${apiKey}&units=${units}`;
-  axios.get(apiUrl).then(({data: {main: temps, wind, weather}}) => {
-    currentUnits = units;
-    currentCity = city;
-    updateValues(city, temps, wind, weather, units);
-  });
+  axios
+    .get(apiUrl)
+    .then(({data: {main: temps, wind, weather, coord, daily}}) => {
+      currentUnits = units;
+      currentCity = city;
+      updateValues(city, temps, wind, weather, units, coord);
+      displayForecast(daily);
+    });
 }
 
 // search engine
@@ -118,7 +127,6 @@ let celciusLink = document.querySelector("#celcius-link");
 let fahrenheitLink = document.querySelector("#fahrenheit-link");
 celciusLink.addEventListener("click", () => {
   updateTempForCity(currentCity, "metric");
-  displayForecast();
 });
 fahrenheitLink.addEventListener("click", () =>
   updateTempForCity(currentCity, "imperial")
@@ -126,7 +134,8 @@ fahrenheitLink.addEventListener("click", () =>
 updateTempForCity("San Diego", "metric");
 
 // //forecast for 7 days
-function displayForecast() {
+function displayForecast(daily) {
+  console.log(daily);
   let forecastElement = document.querySelector("#forecast");
 
   let forecastHTML = `<div class="row row-list">`;
