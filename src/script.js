@@ -156,8 +156,6 @@ function formatDay(timestamp) {
 
 // //forecast for 7 days
 function displayForecast(response) {
-  console.log({RESPONSEL: response});
-
   // daily high and low
   let tempHigh = Math.round(response.data.daily[0].temperature.maximum);
   let tempSidebarHigh = document.querySelector("#temp-high");
