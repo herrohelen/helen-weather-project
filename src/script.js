@@ -50,68 +50,59 @@ function capitalizeFirstLetter(string) {
 let currentDate = document.querySelector("p.date");
 currentDate.innerHTML = formattedDate();
 
+let apiKey = "8fa43f1bb3c08595170oa2tf64203b0b";
 let currentUnits = "metric";
 let currentCity = "San Diego";
 let windSpeedUnits = {imperial: " mph", metric: " km/h"};
 
-function getForecast(coordinates) {
-  let apiKey = "281450ec88936f4fa8ee9864682b49a0";
-  let apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${apiKey}&units=metric`;
+function getForecast({longitude, latitude}, units) {
+  let apiUrl = `https://api.shecodes.io/weather/v1/forecast?lon=${longitude}&lat=${latitude}&key=${apiKey}&units=${units}`;
 
   https: axios.get(apiUrl).then(displayForecast);
 }
 
-function updateValues(newCity, temps, wind, weather, units, coord) {
+function updateValues(newCity, temps, wind, condition, units, coord) {
   let celciusLink = document.querySelector("#celcius-link");
   let fahrenheitLink = document.querySelector("#fahrenheit-link");
   if (units === "metric") {
-    fahrenheitLink.classList.add("inactive-degrees");
-    celciusLink.classList.remove("inactive-degrees");
+    fahrenheitLink.classList.remove("active-degrees");
+    celciusLink.classList.add("active-degrees");
   } else {
-    fahrenheitLink.classList.remove("inactive-degrees");
-    celciusLink.classList.add("inactive-degrees");
+    fahrenheitLink.classList.add("active-degrees");
+    celciusLink.classList.remove("active-degrees");
   }
 
-  let tempCurrent = Math.round(temps.temp);
+  let tempCurrent = Math.round(temps.current);
   let tempMainHeader = document.querySelector("#todays-weather-temp");
   tempMainHeader.innerHTML = `${tempCurrent}°`;
 
-  let tempHigh = Math.round(temps.temp_max);
-  let tempSidebarHigh = document.querySelector("#temp-high");
-  tempSidebarHigh.innerHTML = tempHigh;
-  let tempLow = Math.round(temps.temp_min);
-  let tempSidebarLow = document.querySelector("#temp-low");
-  tempSidebarLow.innerHTML = tempLow;
-
+  //daily wind speed
   let windSpeedElement = document.querySelector("#wind-speed-value");
   windSpeedElement.innerHTML = Math.round(wind.speed);
   let windSpeedUnitsElement = document.querySelector("#wind-speed-units");
   windSpeedUnitsElement.innerHTML = windSpeedUnits[units];
 
+  //capitalize city search
   let descriptionElement = document.querySelector("#weather-description");
-  descriptionElement.innerHTML = capitalizeFirstLetter(weather[0].description);
+  descriptionElement.innerHTML = capitalizeFirstLetter(condition.description);
 
-  let iconUrl = "http://openweathermap.org/img/w/" + weather[0].icon + ".png";
   let weatherIconElement = document.querySelector("#weather-icon");
-  weatherIconElement.setAttribute("src", iconUrl);
-  weatherIconElement.setAttribute("alt", weather[0].description);
+  weatherIconElement.setAttribute("src", condition.icon_url);
+  weatherIconElement.setAttribute("alt", condition.description);
 
   let currentCityHeader = document.querySelector("h2");
   currentCityHeader.innerHTML = capitalizeFirstLetter(newCity);
-  displayForecast();
-  getForecast(coord);
+  getForecast(coord, units);
 }
 
 function updateTempForCity(city, units) {
-  let apiKey = "281450ec88936f4fa8ee9864682b49a0";
-  let apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=${units}`;
+  let apiUrl = `https://api.shecodes.io/weather/v1/current?query=${city}&key=${apiKey}&units=${units}`;
   axios
     .get(apiUrl)
-    .then(({data: {main: temps, wind, weather, coord, daily}}) => {
+    .then(({data: {city, temperature, wind, coordinates, condition}}) => {
       currentUnits = units;
       currentCity = city;
-      updateValues(city, temps, wind, weather, units, coord);
-      displayForecast(daily);
+      updateValues(city, temperature, wind, condition, units, coordinates);
     });
 }
 
@@ -133,29 +124,48 @@ fahrenheitLink.addEventListener("click", () =>
 );
 updateTempForCity("San Diego", "metric");
 
+function formatDay(timestamp) {
+  let date = new Date(timestamp * 1000);
+  let day = date.getDay();
+  let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  return days[day];
+}
+
 // //forecast for 7 days
-function displayForecast(daily) {
-  console.log(daily);
+function displayForecast(response) {
+  console.log({RESPONSE: response});
+  // daily high and low
+  let tempHigh = Math.round(response.data.daily[0].temperature.maximum);
+  let tempSidebarHigh = document.querySelector("#temp-high");
+  tempSidebarHigh.innerHTML = tempHigh;
+  let tempLow = Math.round(response.data.daily[0].temperature.minimum);
+  let tempSidebarLow = document.querySelector("#temp-low");
+  tempSidebarLow.innerHTML = tempLow;
+
+  let forecast = response.data.daily;
+
   let forecastElement = document.querySelector("#forecast");
 
   let forecastHTML = `<div class="row row-list">`;
-  let days = ["Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"];
-  days.forEach(function (day) {
+  forecast.forEach(function (forecastDay) {
     forecastHTML =
       forecastHTML +
       `
-        <div class=" col">
-          <p class="day">
-          <span class="day-of-the-week">${day}</span>
-          <br />
-            <span class="day-icon">
-              <i class="bi bi-cloud-sun"></i>
-           </span>
-           <br />
-           <b>74°</b>| 66°
-          </p>
-       </div>
-`;
+          <div class=" col">
+            <p class="day">
+            <span class="day-of-the-week">${formatDay(forecastDay.time)}</span>
+            <br />
+              <span class="day-icon">
+                <i class="bi bi-cloud-sun"></i>
+             </span>
+             <br />
+             <b>${Math.round(
+               forecastDay.temperature.maximum
+             )}°</b>| ${Math.round(forecastDay.temperature.minimum)}°
+            </p>
+         </div>
+  `;
   });
 
   forecastHTML = forecastHTML + `</div>`;
