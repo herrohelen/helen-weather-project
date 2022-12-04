@@ -1,3 +1,23 @@
+let iconMapping = {
+  "clear-sky": "bi-brightness-high",
+  "clear-sky-night": "bi-moon-stars",
+  "few-clouds": "bi-cloud-sun",
+  "few-clouds-night": "bi-cloud-moon",
+  "scattered-clouds": "bi-cloudy",
+  "broken-clouds": "bi-clouds",
+  "shower-rain": "bi-cloud-rain",
+  rain: "bi-cloud-drizzle",
+  thunderstom: "bi-cloud-lightning",
+  snow: "bi-snow2",
+  mist: "bi-cloud-haze",
+};
+
+function getIconClassName(iconName) {
+  let iconNameTimeOfDay = iconName;
+  let iconNameGeneral = iconName.split("-").slice(0, -1).join("-");
+  return iconMapping[iconNameTimeOfDay] ?? iconMapping[iconNameGeneral];
+}
+
 // formatted date
 function formattedDate() {
   let now = new Date();
@@ -86,9 +106,11 @@ function updateValues(newCity, temps, wind, condition, units, coord) {
   let descriptionElement = document.querySelector("#weather-description");
   descriptionElement.innerHTML = capitalizeFirstLetter(condition.description);
 
+  // today's weather icon
   let weatherIconElement = document.querySelector("#weather-icon");
-  weatherIconElement.setAttribute("src", condition.icon_url);
+  // weatherIconElement.setAttribute("src", condition.icon_url);
   weatherIconElement.setAttribute("alt", condition.description);
+  weatherIconElement.classList = `bi ${getIconClassName(condition.icon)}`;
 
   let currentCityHeader = document.querySelector("h2");
   currentCityHeader.innerHTML = capitalizeFirstLetter(newCity);
@@ -134,7 +156,8 @@ function formatDay(timestamp) {
 
 // //forecast for 7 days
 function displayForecast(response) {
-  console.log({RESPONSE: response});
+  console.log({RESPONSEL: response});
+
   // daily high and low
   let tempHigh = Math.round(response.data.daily[0].temperature.maximum);
   let tempSidebarHigh = document.querySelector("#temp-high");
@@ -157,7 +180,9 @@ function displayForecast(response) {
             <span class="day-of-the-week">${formatDay(forecastDay.time)}</span>
             <br />
               <span class="day-icon">
-                <i class="bi bi-cloud-sun"></i>
+                <i class="bi ${getIconClassName(
+                  forecastDay.condition.icon
+                )}"></i>
              </span>
              <br />
              <b>${Math.round(
