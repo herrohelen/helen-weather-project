@@ -58,6 +58,10 @@ function formattedDate() {
   let hour = now.getHours();
   let min = now.getMinutes();
 
+  if (min <= 9) {
+    min = "0" + min;
+  }
+
   return (now = `${day}, ${month} ${now.getDate()}, ${year} | ${hour}:${min}`);
 }
 
@@ -168,7 +172,7 @@ function displayForecast(response) {
 
   let forecastElement = document.querySelector("#forecast");
 
-  let forecastHTML = `<div class="row row-list">`;
+  let forecastHTML = `<div id="forecast-box" class="row row-list">`;
   forecast.forEach(function (forecastDay) {
     forecastHTML =
       forecastHTML +

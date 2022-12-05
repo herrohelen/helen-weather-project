@@ -6,11 +6,15 @@ body {
   border: 1px solid #f0eeee;
   border-radius: 5px;
   box-shadow: 2px 2px 10px #645a05;
-  width: 800px;
+  width: 100%;
+  max-width: 750px;
   margin-top: 50px;
+  margin-bottom: 50px;
   background-color: rgb(239, 238, 238);
   opacity: 83%;
+  position: relative;
 }
+
 .location-bubble {
   font-size: 28px;
 }
@@ -78,6 +82,7 @@ a:link {
   padding: 10px 0;
   background-color: #fff;
   box-shadow: 1px 1px 5px rgb(128, 128, 128);
+  white-space: nowrap;
 }
 .day:hover {
   box-shadow: 3px 3px 7px #c5b208;
@@ -89,6 +94,10 @@ a:link {
   font-family: "Open Sans", sans-serif;
   font-weight: regular;
   font-size: 20px;
+}
+
+#forecast-box {
+  margin: 10px 25px 10px 25px;
 }
 
 .footer {
